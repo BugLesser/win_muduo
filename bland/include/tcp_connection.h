@@ -9,12 +9,15 @@ class Channel;
 
 class TcpConnection {
 public:
-    TcpConnection(EventLoop *loop, Socket *socket);
+    TcpConnection(EventLoop *loop, 
+                Socket *socket,
+                const InetAddress& localAddr,
+                const InetAddress& peerAddr);
 
     ~TcpConnection();
 
-    const InetAddress& localAddress();
-    const InetAddress& peerAddress();
+    const InetAddress& localAddress() { return localAddr_; }
+    const InetAddress& peerAddress() { return peerAddr_; }
 
     void send(const char* buf, int len);
     void send(const std::string& buf);
@@ -39,6 +42,9 @@ private:
     Channel *channel_;
     Buffer *inputBuffer_;
     Buffer *outputBuffer_;
+
+    const InetAddress& localAddr_;
+    const InetAddress& peerAddr_;
 
     ConnectionCallback connectionCallback_;
     MessageCallback messageCallback_;

@@ -4,12 +4,17 @@
 #include "socket.h"
 #include "buffer.h"
 
-TcpConnection::TcpConnection(EventLoop *loop, Socket *socket)
+TcpConnection::TcpConnection(EventLoop *loop, 
+                            Socket *socket,
+                            const InetAddress& localAddr,
+                            const InetAddress& peerAddr)
 : loop_(loop)
 , socket_(socket)
 , channel_(new Channel(loop, socket->sockfd()))
 , inputBuffer_(new Buffer())
-, outputBuffer_(new Buffer()) {
+, outputBuffer_(new Buffer())
+, localAddr_(localAddr)
+, peerAddr_(peerAddr) {
     channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this));
     channel_->setWriteCallback(std::bind(&TcpConnection::handleWrite, this));
     channel_->setCloseCallback(std::bind(&TcpConnection::handleClose, this));

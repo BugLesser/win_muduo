@@ -46,4 +46,6 @@ const socket_addr_type* sockaddr_cast(const in_addr_type* addr);
 const socket_addr_type* sockaddr_cast(const in6_addr_type* addr);
 socket_addr_type* sockaddr_cast(in_addr_type* addr);
 socket_addr_type* sockaddr_cast(in6_addr_type* addr);
+
+const in6_addr_type getLocalAddr(socket_type sockfd);
 }

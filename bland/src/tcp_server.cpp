@@ -28,7 +28,8 @@ void TcpServer::handleNewConnection(Socket *socket, const InetAddress& peerAddr)
 
     EventLoop* loop = threadPool_->getNextLoop();
 
-    TcpConnection* connection = new TcpConnection(loop, socket);
+    InetAddress localAddr(socket_ops::getLocalAddr(socket->sockfd()));
+    TcpConnection* connection = new TcpConnection(loop, socket, localAddr, peerAddr);
     connection->setConnectionCallback(connectionCallback_);
     connection->setMessageCallback(messageCallback_);
     connection->setWriteCompleteCallback(writeCompleteCallback_);

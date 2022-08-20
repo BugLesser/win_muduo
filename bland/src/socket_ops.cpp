@@ -1,5 +1,6 @@
 #include "socket_ops.h"
 
+#include <cstring>
 
 #ifdef _WIN32
 struct __InitWSASocket_S {
@@ -64,4 +65,14 @@ socket_addr_type* socket_ops::sockaddr_cast(in_addr_type* addr) {
 
 socket_addr_type* socket_ops::sockaddr_cast(in6_addr_type* addr) {
     return static_cast<socket_addr_type*>(static_cast<void*>(addr));
+}
+
+const in6_addr_type socket_ops::getLocalAddr(socket_type sockfd) {
+    in6_addr_type localaddr;
+    ::memset(&localaddr, 0, sizeof(localaddr));
+    auto addrlen = static_cast<socket_len_type>(sizeof(localaddr));
+    if(::getsockname(sockfd, sockaddr_cast(&localaddr), &addrlen) < 0) {
+        // TODO fix this error
+    }
+    return localaddr;
 }
