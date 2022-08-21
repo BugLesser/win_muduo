@@ -30,11 +30,13 @@ public:
 
     void update();
     void handleEvent();
+    void remove();
 
     inline socket_type sockfd() const noexcept { return sockfd_; }
     inline int events() const noexcept { return events_; }
     inline int revents() const noexcept { return revents_; }
     inline void setRevents(int revents) noexcept { revents_ = revents; }
+    inline EventLoop* getLoop() noexcept { return loop_; }
 
     void setReadCallback(ChannelEventCallback cb) { readCallback_ = std::move(cb); }
     void setWriteCallback(ChannelEventCallback cb) { writeCallback_ = std::move(cb); }

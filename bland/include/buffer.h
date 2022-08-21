@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <cassert>
 
-#include "socket_ops.h"
+
+class Socket;
 
 class Buffer {
 public:
@@ -61,7 +62,7 @@ public:
     double readDouble();
     std::string readString(size_t length);
 
-    int readSocket(socket_type sockfd, int* saveErrno);
+    int readSocket(Socket *socket, int* saveErrno);
 
     size_t readableBytes() const noexcept;
     size_t writeableBytes() const noexcept;

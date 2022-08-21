@@ -11,6 +11,7 @@ public:
     void run();
     void quit() { quit_ = true; }
     void updateChannel(Channel *channel);
+    void removeChannel(Channel *channel);
 private:
     Poller *poller_;
     bool quit_;

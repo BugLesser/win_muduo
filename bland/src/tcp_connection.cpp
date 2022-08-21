@@ -4,6 +4,8 @@
 #include "socket.h"
 #include "buffer.h"
 
+#include "logging.h"
+
 TcpConnection::TcpConnection(EventLoop *loop, 
                             Socket *socket,
                             const InetAddress& localAddr,
@@ -28,6 +30,10 @@ TcpConnection::~TcpConnection() {
     if(outputBuffer_) delete outputBuffer_;
 }
 
+void TcpConnection::send(const char* buf, int len) {
+    socket_->write(buf, len);
+}
+
 void TcpConnection::startHandleEvent() {
     channel_->enableReading();
     channel_->enableWriting();
@@ -39,9 +45,13 @@ void TcpConnection::startHandleEvent() {
 void TcpConnection::handleRead() {
     int saveErrno = 0;
     inputBuffer_->clear();
-    int n = inputBuffer_->readSocket(socket_->sockfd(), &saveErrno);
-    if(n <= 0) {
-        // error or closed
+    int n = inputBuffer_->readSocket(socket_, &saveErrno);
+    if(n == 0) {
+        handleClose();
+        return;
+    }
+    if(n < 0) {
+        handleError();
         return;
     }
     if(messageCallback_) {
@@ -54,9 +64,15 @@ void TcpConnection::handleWrite() {
 }
 
 void TcpConnection::handleClose() {
-
+    channel_->disableAll();
+    channel_->remove();
+    socket_->close();
+    if(closeCallback_) closeCallback_(this);
+    LOG(DEBUG, "handle close: %s", peerAddr_.toIpPort().c_str());
 }
 
 void TcpConnection::handleError() {
-
+    int err = socket_ops::getSocketError(socket_->sockfd());
+    if(err == 0) return;
+    LOG(INFO, "handle error [code: %d, msg: %s]", err, strerror(err));
 }

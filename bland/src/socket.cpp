@@ -45,3 +45,11 @@ Socket* Socket::accept(socket_addr_type *addr, int *addrlen) {
     assert(sock != invalid_socket);
     return new Socket(sock);
 }
+
+int Socket::write(const char* buf, int len) {
+    return socket_ops::write(sockfd_, buf, len, 0);
+}
+
+void Socket::close() {
+    socket_ops::close(sockfd_);
+}

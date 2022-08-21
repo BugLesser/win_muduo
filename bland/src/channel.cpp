@@ -26,3 +26,7 @@ void Channel::handleEvent() {
         errorCallback_();
     }
 }
+
+void Channel::remove() {
+    loop_->removeChannel(this);
+}

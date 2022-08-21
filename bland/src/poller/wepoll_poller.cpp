@@ -24,7 +24,7 @@ void WEPollPoller::poll(std::vector<Channel*>& activeChannels, int timeout) {
         if(event.events & (EPOLLOUT)) {
             revents |= Channel::kWriteable;
         }
-        if(event.events & (EPOLLRDHUP)) {
+        if(event.events & (EPOLLRDHUP | EPOLLHUP)) {
             revents |= Channel::kClosed;
         }
         if(event.events & (EPOLLERR)) {
@@ -49,7 +49,7 @@ void WEPollPoller::updateChannel(Channel *channel) {
         events |= EPOLLOUT;
     }
     if(channel->events() & Channel::kClosed) {
-        events |= EPOLLRDHUP;
+        events |= (EPOLLRDHUP | EPOLLHUP);
     }
     if(channel->events() & Channel::kErrored) {
         events |= EPOLLERR;

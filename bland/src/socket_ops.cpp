@@ -20,6 +20,12 @@ socket_type socket_ops::socket(int af, int type, int protocol) {
 }
 
 int socket_ops::setNonblock(socket_type sockfd) {
+#ifdef _WIN32
+    u_long iMode = 1;
+    return ioctlsocket(sockfd, FIONBIO, &iMode);
+#elif defined(__linux__)
+    return fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL) | O_NONBLOCK);
+#endif
     return 0;
 }
 
@@ -75,4 +81,14 @@ const in6_addr_type socket_ops::getLocalAddr(socket_type sockfd) {
         // TODO fix this error
     }
     return localaddr;
+}
+
+int socket_ops::getSocketError(socket_type sockfd) {
+    int optval;
+    int optlen = sizeof(optval);
+    if(::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char*)&optval, &optlen) < 0) {
+        return errno;
+    } else {
+        return optval;
+    }
 }

@@ -1,5 +1,6 @@
 #include "buffer.h"
 
+#include "socket.h"
 
 void Buffer::clear() {
     // buffer_.clear();
@@ -114,10 +115,10 @@ std::string Buffer::readString(size_t length) {
     return result;
 }
 
-int Buffer::readSocket(socket_type sockfd, int* saveErrno) {
+int Buffer::readSocket(Socket* socket, int* saveErrno) {
     auto size = writeableBytes();
     char *buf = new char[size];
-    int n = socket_ops::read(sockfd, buf, size, 0);
+    int n = socket_ops::read(socket->sockfd(), buf, size, 0);
     if(n <= 0) {
         *saveErrno = errno;
     } else {

@@ -48,4 +48,6 @@ socket_addr_type* sockaddr_cast(in_addr_type* addr);
 socket_addr_type* sockaddr_cast(in6_addr_type* addr);
 
 const in6_addr_type getLocalAddr(socket_type sockfd);
+
+int getSocketError(socket_type sockfd);
 }

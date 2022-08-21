@@ -33,7 +33,7 @@ void Acceptor::handleRead() {
     in_addr_type addr{};
     int addrLen = sizeof(in_addr_type);
     Socket *acceptSocket = socket_->accept((socket_addr_type*)&addr, &addrLen);
-
+    socket_ops::setNonblock(acceptSocket->sockfd());
     if(newConnectionCallback_) {
         newConnectionCallback_(acceptSocket, InetAddress(addr));
     }
